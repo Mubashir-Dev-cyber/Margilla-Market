@@ -1,116 +1,34 @@
-"use client"
+import Link from "next/link";
 
-import { useState, useEffect } from "react";
-
-export default function Home() {
-  const [products, setProducts] = useState([]);
-  const [query, setQuery] = useState("");
-
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const res = await fetch("/api/products");
-        const data = await res.json();
-        setProducts(data);
-      } catch (error) {
-        console.error("Error fetching products:", error);
-      }
-    };
-
-    fetchProducts();
-  }, []);
-
-  const handleSearch = async () => {
-    const trimmedQuery = query.trim();
-
-    if (!trimmedQuery) {
-      return;
-    }
-
-    try {
-      const res = await fetch("/api/ai-search", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ query: trimmedQuery }),
-      });
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.error || "Search failed");
-      }
-
-      setProducts(data);
-    } catch (error) {
-      console.error("Error searching products:", error);
-    }             
-  };
-
+export default function HomePage() {
   return (
-    <main className="min-h-screen bg-slate-50 px-4 py-8 sm:px-6 lg:px-8">
+    <main className="min-h-screen bg-slate-50 px-4 py-10 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
-        <header className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <p className="text-sm uppercase tracking-[0.25em] text-slate-500">Shop</p>
-            <h1 className="mt-2 text-4xl font-bold tracking-tight text-slate-900">All Products</h1>
-            <input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              type="text"
-              placeholder="Search products..."
-              className="mt-2 rounded-md border border-slate-300 bg-white text-black py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
-            />
-            <button
-              type="button"
-              onClick={handleSearch}
-              className="mt-2 rounded-md bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-700 cursor-pointer mb-6"
-            >
-              Search
-            </button>
-
-            <p className="mt-2 max-w-2xl text-base text-slate-600">
-              Browse the full product catalog. Each item is loaded from your backend and rendered with Tailwind CSS.
-            </p>
-          </div>
-          <div className="rounded-3xl bg-white px-5 py-4 text-center shadow-sm ring-1 ring-slate-200">
-            <p className="text-sm text-slate-500">Total products</p>
-            <p className="mt-1 text-2xl font-semibold text-slate-900">{products.length}</p>
-          </div>
-        </header>
-
-        <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3 cursor-pointer">
-          {products.length === 0 ? (
-            <div className="col-span-full rounded-3xl border border-dashed border-slate-300 bg-white p-10 text-center text-slate-500 shadow-sm">
-              Loading products...
+        <section className="overflow-hidden rounded-[2rem] bg-emerald-950 px-6 py-14 text-white shadow-xl sm:px-12 sm:py-20">
+          <p className="text-sm font-semibold uppercase tracking-[0.3em] text-emerald-300">Welcome to Margilla Market</p>
+          <div className="mt-5 grid gap-10 md:grid-cols-[1fr_300px] md:items-end">
+            <div>
+              <h1 className="max-w-4xl text-5xl font-bold tracking-tight sm:text-7xl">A marketplace made for Islamabad.</h1>
+              <p className="mt-6 max-w-2xl text-lg leading-8 text-emerald-100">Discover useful products, support local shopping, and get what you need closer to home.</p>
+              <Link href="/products" className="mt-8 inline-flex rounded-full bg-white px-6 py-3.5 font-bold text-emerald-950 transition hover:bg-emerald-100">Explore products</Link>
             </div>
-          ) : (
-            products.map((product) => (
-              <article key={product._id} className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-md">
-                <div className="h-48 bg-slate-100">
-                  <img
-                    src={product.image}
-                    alt={product.title}
-                    className="h-full w-full object-cover"
-                  />
-                </div>
-                <div className="space-y-4 p-5">
-                  <div>
-                    <p className="text-sm uppercase tracking-[0.25em] text-slate-500">{product.category}</p>
-                    <h2 className="mt-2 text-xl font-semibold text-slate-900">{product.title}</h2>
-                  </div>
-                  <p className="text-sm leading-6 text-slate-600">{product.description}</p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-lg font-bold text-slate-900">${product.price?.toFixed(2)}</span>
-                    <button className="rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-700">
-                      View
-                    </button>
-                  </div>
-                </div>
-              </article>
-            ))
-          )}
-        </div>
+            <div className="rounded-3xl bg-white/10 p-6 backdrop-blur"><p className="text-sm text-emerald-200">Made for local life</p><p className="mt-3 text-3xl font-bold">Simple. Nearby. Yours.</p><p className="mt-3 leading-7 text-emerald-100">A focused shopping experience for people across Islamabad.</p></div>
+          </div>
+        </section>
+
+        <section className="mt-10 grid gap-5 md:grid-cols-3">
+          {[
+            ["Discover locally", "Find everyday essentials and thoughtful finds in one welcoming marketplace."],
+            ["Search naturally", "Tell us what you are looking for and let smart search help you find it."],
+            ["Delivered nearby", "Checkout with your Islamabad delivery details and keep shopping simple."],
+          ].map(([title, description]) => <article key={title} className="rounded-3xl bg-white p-7 shadow-sm ring-1 ring-slate-200"><h2 className="text-xl font-bold text-slate-900">{title}</h2><p className="mt-3 leading-7 text-slate-600">{description}</p></article>)}
+        </section>
+
+        <section className="mt-10 rounded-3xl bg-white p-8 text-center shadow-sm ring-1 ring-slate-200 sm:p-12">
+          <p className="text-sm font-semibold uppercase tracking-[0.25em] text-emerald-700">Your next find is waiting</p>
+          <h2 className="mt-3 text-3xl font-bold text-slate-900">Start browsing the Margilla Market catalog.</h2>
+          <Link href="/products" className="mt-6 inline-flex rounded-full bg-slate-900 px-6 py-3 font-semibold text-white transition hover:bg-emerald-700">View all products</Link>
+        </section>
       </div>
     </main>
   );
