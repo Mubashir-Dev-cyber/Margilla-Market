@@ -1,11 +1,25 @@
 import connectDB from "@/lib/db";
 import Product from "@/models/Product";
+import openai from "openai";
+
+const openaiClient = new openai({
+    apiKey: process.env.OPENAI_API_KEY
+});
+
+async function generateVector(text) {
+    const response = await openaiClient.embeddings.create({
+        model: "text-embedding-3-small",
+        input: text
+    });
+    return response.data[0].embedding;
+}
 
 export async function GET() {
     await connectDB();
     const products = await Product.find();
     await Product.deleteMany();
-    await Product.insertMany([
+    const productsData = [
+
         {
             title: "Blue Sneakers",
             description: "Comfortable blue sneakers for everyday wear",
@@ -286,147 +300,176 @@ export async function GET() {
             category: "Health",
             image: `https://picsum.photos/500/300?random=${Math.random()}`
         },
-         {
-    title: "Premium Men's Lightweight Blue Running Sneakers for Everyday Walking and Fitness",
-    description: "Comfortable lightweight blue running sneakers designed for everyday walking, jogging, gym workouts, fitness training, and casual outdoor activities.",
-    price: 79.99,
-    category: "Footwear",
-    image: `https://picsum.photos/500/300?random=${Math.random()}`
-  },
-  {
-    title: "Elegant Women's Red Evening Dress for Weddings, Parties, and Special Occasions",
-    description: "Beautiful red evening dress featuring an elegant design, comfortable fabric, and stylish fit, perfect for weddings, parties, formal dinners, and special occasions.",
-    price: 149.99,
-    category: "Clothing",
-    image: `https://picsum.photos/500/300?random=${Math.random()}`
-  },
-  {
-    title: "Premium Wireless Bluetooth Headphones with Active Noise Cancellation and Deep Bass",
-    description: "High-quality wireless Bluetooth headphones with active noise cancellation, deep bass, clear audio, comfortable ear cushions, and long-lasting battery life.",
-    price: 199.99,
-    category: "Electronics",
-    image: `https://picsum.photos/500/300?random=${Math.random()}`
-  },
-  {
-    title: "Professional RGB Mechanical Gaming Keyboard with Customizable Backlighting and Blue Switches",
-    description: "High-performance mechanical gaming keyboard featuring RGB backlighting, responsive blue switches, customizable lighting effects, anti-ghosting, and durable construction.",
-    price: 119.99,
-    category: "Electronics",
-    image: `https://picsum.photos/500/300?random=${Math.random()}`
-  },
-  {
-    title: "Ergonomic Wireless RGB Gaming Mouse with Adjustable DPI and Programmable Buttons",
-    description: "Precision wireless gaming mouse with adjustable DPI settings, customizable RGB lighting, programmable buttons, ergonomic grip, and responsive optical tracking.",
-    price: 69.99,
-    category: "Electronics",
-    image: `https://picsum.photos/500/300?random=${Math.random()}`
-  },
-  {
-    title: "Advanced Smart Fitness Watch with Heart Rate Monitoring, GPS, and Sleep Tracking",
-    description: "Modern smart fitness watch featuring heart rate monitoring, built-in GPS, sleep tracking, step counting, workout tracking, notifications, and long battery life.",
-    price: 249.99,
-    category: "Electronics",
-    image: `https://picsum.photos/500/300?random=${Math.random()}`
-  },
-  {
-    title: "Durable Water-Resistant Laptop Backpack with USB Charging Port and Multiple Compartments",
-    description: "Spacious water-resistant laptop backpack with padded computer compartment, USB charging port, multiple storage pockets, adjustable shoulder straps, and travel-friendly design.",
-    price: 74.99,
-    category: "Accessories",
-    image: `https://picsum.photos/500/300?random=${Math.random()}`
-  },
-  {
-    title: "Premium Genuine Leather RFID Blocking Wallet for Men with Multiple Card Slots",
-    description: "Classic genuine leather wallet with RFID blocking technology, multiple credit card slots, cash compartment, identification card holder, and slim everyday design.",
-    price: 44.99,
-    category: "Accessories",
-    image: `https://picsum.photos/500/300?random=${Math.random()}`
-  },
-  {
-    title: "Classic Men's Slim Fit Stretch Denim Jeans for Casual Everyday Wear",
-    description: "Comfortable slim-fit denim jeans made with stretch fabric, designed for casual everyday wear, outdoor activities, travel, shopping, and relaxed weekend outfits.",
-    price: 64.99,
-    category: "Clothing",
-    image: `https://picsum.photos/500/300?random=${Math.random()}`
-  },
-  {
-    title: "Premium Men's Waterproof Leather Boots for Hiking, Travel, and Outdoor Adventures",
-    description: "Durable waterproof leather boots with strong grip, comfortable inner lining, supportive sole, and rugged construction for hiking, travel, work, and outdoor adventures.",
-    price: 139.99,
-    category: "Footwear",
-    image: `https://picsum.photos/500/300?random=${Math.random()}`
-  },
-  {
-    title: "Portable Bluetooth Wireless Speaker with Powerful Stereo Sound and Extended Battery Life",
-    description: "Compact portable Bluetooth speaker delivering powerful stereo sound, enhanced bass, wireless connectivity, rechargeable battery, and convenient outdoor portability.",
-    price: 89.99,
-    category: "Electronics",
-    image: `https://picsum.photos/500/300?random=${Math.random()}`
-  },
-  {
-    title: "27-Inch Ultra HD 4K Computer Monitor with High Resolution and Vibrant Color Display",
-    description: "Professional 27-inch 4K UHD monitor offering sharp high-resolution visuals, vibrant colors, wide viewing angles, and excellent performance for gaming, work, design, and entertainment.",
-    price: 399.99,
-    category: "Electronics",
-    image: `https://picsum.photos/500/300?random=${Math.random()}`
-  },
-  {
-    title: "Multi-Port USB-C Hub Adapter with HDMI, USB 3.0, SD Card Reader, and Fast Data Transfer",
-    description: "Compact USB-C hub featuring HDMI output, USB 3.0 ports, SD card reader, high-speed data transfer, and convenient connectivity for laptops and tablets.",
-    price: 49.99,
-    category: "Electronics",
-    image: `https://picsum.photos/500/300?random=${Math.random()}`
-  },
-  {
-    title: "High-Speed Portable 1TB External SSD Storage Drive for Computers and Backup",
-    description: "Fast portable 1TB solid state drive designed for secure file storage, computer backups, video editing, gaming libraries, photos, documents, and high-speed data transfer.",
-    price: 139.99,
-    category: "Electronics",
-    image: `https://picsum.photos/500/300?random=${Math.random()}`
-  },
-  {
-    title: "Automatic Programmable Coffee Maker Machine with Built-In Timer and Large Water Reservoir",
-    description: "Easy-to-use automatic coffee maker with programmable timer, large water reservoir, reusable filter, quick brewing system, and convenient design for home or office.",
-    price: 129.99,
-    category: "Kitchen",
-    image: `https://picsum.photos/500/300?random=${Math.random()}`
-  },
-  {
-    title: "Digital 6-Liter Air Fryer with Multiple Cooking Presets and Adjustable Temperature Control",
-    description: "Large-capacity digital air fryer with multiple cooking presets, adjustable temperature control, rapid air circulation, non-stick basket, and easy-to-use touchscreen controls.",
-    price: 149.99,
-    category: "Kitchen",
-    image: `https://picsum.photos/500/300?random=${Math.random()}`
-  },
-  {
-    title: "Professional Stainless Steel Chef Knife with Sharp Blade and Ergonomic Handle",
-    description: "High-quality stainless steel kitchen chef knife featuring a sharp precision blade, ergonomic non-slip handle, balanced design, and durable construction for food preparation.",
-    price: 69.99,
-    category: "Kitchen",
-    image: `https://picsum.photos/500/300?random=${Math.random()}`
-  },
-  {
-    title: "Complete Non-Stick Cookware Set with Frying Pans, Saucepan, and Cooking Accessories",
-    description: "Complete non-stick cookware collection including frying pans, saucepans, cooking utensils, heat-resistant handles, and durable kitchen accessories for everyday cooking.",
-    price: 199.99,
-    category: "Kitchen",
-    image: `https://picsum.photos/500/300?random=${Math.random()}`
-  },
-  {
-    title: "Ergonomic Adjustable Office Chair with Lumbar Support, Armrests, and Comfortable Cushion",
-    description: "Comfortable ergonomic office chair with adjustable height, lumbar support, padded seat, adjustable armrests, smooth-rolling wheels, and breathable backrest for long working hours.",
-    price: 219.99,
-    category: "Furniture",
-    image: `https://picsum.photos/500/300?random=${Math.random()}`
-  },
-  {
-    title: "Modern Minimalist Wooden Computer Desk with Large Workspace and Storage Drawer",
-    description: "Modern wooden computer desk with spacious workspace, built-in storage drawer, sturdy construction, minimalist design, and comfortable layout for home offices and study rooms.",
-    price: 299.99,
-    category: "Furniture",
-    image: `https://picsum.photos/500/300?random=${Math.random()}`
-  }
-    ]);
+        {
+            title: "Premium Men's Lightweight Blue Running Sneakers for Everyday Walking and Fitness",
+            description: "Comfortable lightweight blue running sneakers designed for everyday walking, jogging, gym workouts, fitness training, and casual outdoor activities.",
+            price: 79.99,
+            category: "Footwear",
+            image: `https://picsum.photos/500/300?random=${Math.random()}`
+        },
+        {
+            title: "Elegant Women's Red Evening Dress for Weddings, Parties, and Special Occasions",
+            description: "Beautiful red evening dress featuring an elegant design, comfortable fabric, and stylish fit, perfect for weddings, parties, formal dinners, and special occasions.",
+            price: 149.99,
+            category: "Clothing",
+            image: `https://picsum.photos/500/300?random=${Math.random()}`
+        },
+        {
+            title: "Premium Wireless Bluetooth Headphones with Active Noise Cancellation and Deep Bass",
+            description: "High-quality wireless Bluetooth headphones with active noise cancellation, deep bass, clear audio, comfortable ear cushions, and long-lasting battery life.",
+            price: 199.99,
+            category: "Electronics",
+            image: `https://picsum.photos/500/300?random=${Math.random()}`
+        },
+        {
+            title: "Professional RGB Mechanical Gaming Keyboard with Customizable Backlighting and Blue Switches",
+            description: "High-performance mechanical gaming keyboard featuring RGB backlighting, responsive blue switches, customizable lighting effects, anti-ghosting, and durable construction.",
+            price: 119.99,
+            category: "Electronics",
+            image: `https://picsum.photos/500/300?random=${Math.random()}`
+        },
+        {
+            title: "Ergonomic Wireless RGB Gaming Mouse with Adjustable DPI and Programmable Buttons",
+            description: "Precision wireless gaming mouse with adjustable DPI settings, customizable RGB lighting, programmable buttons, ergonomic grip, and responsive optical tracking.",
+            price: 69.99,
+            category: "Electronics",
+            image: `https://picsum.photos/500/300?random=${Math.random()}`
+        },
+        {
+            title: "Advanced Smart Fitness Watch with Heart Rate Monitoring, GPS, and Sleep Tracking",
+            description: "Modern smart fitness watch featuring heart rate monitoring, built-in GPS, sleep tracking, step counting, workout tracking, notifications, and long battery life.",
+            price: 249.99,
+            category: "Electronics",
+            image: `https://picsum.photos/500/300?random=${Math.random()}`
+        },
+        {
+            title: "Durable Water-Resistant Laptop Backpack with USB Charging Port and Multiple Compartments",
+            description: "Spacious water-resistant laptop backpack with padded computer compartment, USB charging port, multiple storage pockets, adjustable shoulder straps, and travel-friendly design.",
+            price: 74.99,
+            category: "Accessories",
+            image: `https://picsum.photos/500/300?random=${Math.random()}`
+        },
+        {
+            title: "Premium Genuine Leather RFID Blocking Wallet for Men with Multiple Card Slots",
+            description: "Classic genuine leather wallet with RFID blocking technology, multiple credit card slots, cash compartment, identification card holder, and slim everyday design.",
+            price: 44.99,
+            category: "Accessories",
+            image: `https://picsum.photos/500/300?random=${Math.random()}`
+        },
+        {
+            title: "Classic Men's Slim Fit Stretch Denim Jeans for Casual Everyday Wear",
+            description: "Comfortable slim-fit denim jeans made with stretch fabric, designed for casual everyday wear, outdoor activities, travel, shopping, and relaxed weekend outfits.",
+            price: 64.99,
+            category: "Clothing",
+            image: `https://picsum.photos/500/300?random=${Math.random()}`
+        },
+        {
+            title: "Premium Men's Waterproof Leather Boots for Hiking, Travel, and Outdoor Adventures",
+            description: "Durable waterproof leather boots with strong grip, comfortable inner lining, supportive sole, and rugged construction for hiking, travel, work, and outdoor adventures.",
+            price: 139.99,
+            category: "Footwear",
+            image: `https://picsum.photos/500/300?random=${Math.random()}`
+        },
+        {
+            title: "Portable Bluetooth Wireless Speaker with Powerful Stereo Sound and Extended Battery Life",
+            description: "Compact portable Bluetooth speaker delivering powerful stereo sound, enhanced bass, wireless connectivity, rechargeable battery, and convenient outdoor portability.",
+            price: 89.99,
+            category: "Electronics",
+            image: `https://picsum.photos/500/300?random=${Math.random()}`
+        },
+        {
+            title: "27-Inch Ultra HD 4K Computer Monitor with High Resolution and Vibrant Color Display",
+            description: "Professional 27-inch 4K UHD monitor offering sharp high-resolution visuals, vibrant colors, wide viewing angles, and excellent performance for gaming, work, design, and entertainment.",
+            price: 399.99,
+            category: "Electronics",
+            image: `https://picsum.photos/500/300?random=${Math.random()}`
+        },
+        {
+            title: "Multi-Port USB-C Hub Adapter with HDMI, USB 3.0, SD Card Reader, and Fast Data Transfer",
+            description: "Compact USB-C hub featuring HDMI output, USB 3.0 ports, SD card reader, high-speed data transfer, and convenient connectivity for laptops and tablets.",
+            price: 49.99,
+            category: "Electronics",
+            image: `https://picsum.photos/500/300?random=${Math.random()}`
+        },
+        {
+            title: "High-Speed Portable 1TB External SSD Storage Drive for Computers and Backup",
+            description: "Fast portable 1TB solid state drive designed for secure file storage, computer backups, video editing, gaming libraries, photos, documents, and high-speed data transfer.",
+            price: 139.99,
+            category: "Electronics",
+            image: `https://picsum.photos/500/300?random=${Math.random()}`
+        },
+        {
+            title: "Automatic Programmable Coffee Maker Machine with Built-In Timer and Large Water Reservoir",
+            description: "Easy-to-use automatic coffee maker with programmable timer, large water reservoir, reusable filter, quick brewing system, and convenient design for home or office.",
+            price: 129.99,
+            category: "Kitchen",
+            image: `https://picsum.photos/500/300?random=${Math.random()}`
+        },
+        {
+            title: "Digital 6-Liter Air Fryer with Multiple Cooking Presets and Adjustable Temperature Control",
+            description: "Large-capacity digital air fryer with multiple cooking presets, adjustable temperature control, rapid air circulation, non-stick basket, and easy-to-use touchscreen controls.",
+            price: 149.99,
+            category: "Kitchen",
+            image: `https://picsum.photos/500/300?random=${Math.random()}`
+        },
+        {
+            title: "Professional Stainless Steel Chef Knife with Sharp Blade and Ergonomic Handle",
+            description: "High-quality stainless steel kitchen chef knife featuring a sharp precision blade, ergonomic non-slip handle, balanced design, and durable construction for food preparation.",
+            price: 69.99,
+            category: "Kitchen",
+            image: `https://picsum.photos/500/300?random=${Math.random()}`
+        },
+        {
+            title: "Complete Non-Stick Cookware Set with Frying Pans, Saucepan, and Cooking Accessories",
+            description: "Complete non-stick cookware collection including frying pans, saucepans, cooking utensils, heat-resistant handles, and durable kitchen accessories for everyday cooking.",
+            price: 199.99,
+            category: "Kitchen",
+            image: `https://picsum.photos/500/300?random=${Math.random()}`
+        },
+        {
+            title: "Ergonomic Adjustable Office Chair with Lumbar Support, Armrests, and Comfortable Cushion",
+            description: "Comfortable ergonomic office chair with adjustable height, lumbar support, padded seat, adjustable armrests, smooth-rolling wheels, and breathable backrest for long working hours.",
+            price: 219.99,
+            category: "Furniture",
+            image: `https://picsum.photos/500/300?random=${Math.random()}`
+        },
+        {
+            title: "Modern Minimalist Wooden Computer Desk with Large Workspace and Storage Drawer",
+            description: "Modern wooden computer desk with spacious workspace, built-in storage drawer, sturdy construction, minimalist design, and comfortable layout for home offices and study rooms.",
+            price: 299.99,
+            category: "Furniture",
+            image: `https://picsum.photos/500/300?random=${Math.random()}`
+        }
+
+    ];
+
+    // Embeddings are optional. Products can be browsed with normal MongoDB
+    // text fields even when an OpenAI API key has not been added yet.
+    let productsToInsert = productsData;
+
+    if (process.env.OPENAI_API_KEY) {
+        try {
+            productsToInsert = await Promise.all(productsData.map(async (product) => {
+                const embedding = await generateVector(`${product.title} ${product.description} ${product.category}`);
+                return { ...product, embedding };
+            }));
+        } catch (error) {
+            console.warn("OpenAI embeddings unavailable; seeding products without vectors.", error.message);
+        }
+    }
+
+    /*
+      Previous version kept for learning:)(When have API key Just uncomment it then)
+
+      const productsWithVectors = await Promise.all(productsData.map(async (product) => {
+          const embedding = await generateVector(`${product.title} ${product.description} ${product.category}`);
+          return { ...product, embedding };
+      }));
+
+      await Product.insertMany(productsWithVectors);
+    */
+
+    await Product.insertMany(productsToInsert);
 
     return Response.json({ message: "Database seeded successfully" })
 }

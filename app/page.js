@@ -8,7 +8,7 @@ export default function HomePage() {
           <p className="text-sm font-semibold uppercase tracking-[0.3em] text-emerald-300">Welcome to Margilla Market</p>
           <div className="mt-5 grid gap-10 md:grid-cols-[1fr_300px] md:items-end">
             <div>
-              <h1 className="max-w-4xl text-5xl font-bold tracking-tight sm:text-7xl">A marketplace made for Islamabad.</h1>
+              <h1 className="max-w-4xl text-4xl font-bold tracking-tight sm:text-7xl">A marketplace made for Islamabad.</h1>
               <p className="mt-6 max-w-2xl text-lg leading-8 text-emerald-100">Discover useful products, support local shopping, and get what you need closer to home.</p>
               <Link href="/products" className="mt-8 inline-flex rounded-full bg-white px-6 py-3.5 font-bold text-emerald-950 transition hover:bg-emerald-100">Explore products</Link>
             </div>
@@ -26,7 +26,7 @@ export default function HomePage() {
 
         <section className="mt-10 rounded-3xl bg-white p-8 text-center shadow-sm ring-1 ring-slate-200 sm:p-12">
           <p className="text-sm font-semibold uppercase tracking-[0.25em] text-emerald-700">Your next find is waiting</p>
-          <h2 className="mt-3 text-3xl font-bold text-slate-900">Start browsing the Margilla Market catalog.</h2>
+          <h2 className="mt-3 text-2xl font-bold text-slate-900 sm:text-3xl">Start browsing the Margilla Market catalog.</h2>
           <Link href="/products" className="mt-6 inline-flex rounded-full bg-slate-900 px-6 py-3 font-semibold text-white transition hover:bg-emerald-700">View all products</Link>
         </section>
       </div>
