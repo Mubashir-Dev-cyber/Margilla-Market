@@ -1,6 +1,6 @@
 # Margilla Market
 
-Margilla Market is a modern, Islamabad-focused e-commerce storefront built with Next.js and MongoDB. Customers can browse a product catalog, search using natural-language queries, add items to a client-side cart, and place cash-on-delivery orders with local delivery details.
+Margilla Market is a modern, e-commerce storefront built with Next.js and MongoDB. Customers can browse a product catalog, search using natural-language queries, add items to a client-side cart, and place cash-on-delivery orders with local delivery details.
 
 The project also includes an optional OpenAI integration. When an API key is available, search queries are expanded into product keywords and product seed data can be enriched with embeddings for future MongoDB Atlas Vector Search work.
 
